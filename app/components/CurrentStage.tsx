@@ -62,20 +62,30 @@ export default function CurrentStage() {
     document.body
   );
 
+  const heartRate = useWorkoutStore((s) => s.currentWorkout?.data.heart_rate ?? null);
+
   return (
     <>
-      <div
-        className="flex items-baseline gap-2 cursor-pointer select-none"
-        onClick={() => setOpen(true)}
-      >
-        <span className="text-xs text-zinc-500 uppercase tracking-widest">R</span>
-        <span className="text-lg font-mono font-semibold tabular-nums text-zinc-100">{current}</span>
-        {next !== null && next !== current && (
-          <>
-            <span className="text-zinc-700 text-xs">→</span>
-            <span className="text-sm font-mono tabular-nums text-zinc-400">{next}</span>
-          </>
+      <div className="flex items-baseline gap-4">
+        {heartRate !== null && (
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-zinc-500 uppercase tracking-widest">HR</span>
+            <span className="text-lg font-mono font-semibold tabular-nums text-zinc-100">{heartRate}</span>
+          </div>
         )}
+        <div
+          className="flex items-baseline gap-2 cursor-pointer select-none"
+          onClick={() => setOpen(true)}
+        >
+          <span className="text-xs text-zinc-500 uppercase tracking-widest">R</span>
+          <span className="text-lg font-mono font-semibold tabular-nums text-zinc-100">{current}</span>
+          {next !== null && next !== current && (
+            <>
+              <span className="text-zinc-700 text-xs">→</span>
+              <span className="text-sm font-mono tabular-nums text-zinc-400">{next}</span>
+            </>
+          )}
+        </div>
       </div>
       {modal}
     </>

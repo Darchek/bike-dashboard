@@ -3,6 +3,7 @@ import WorkoutPlanChart from "./components/WorkoutPlanChart";
 import StagesButton from "./components/StagesButton";
 import CurrentStage from "./components/CurrentStage";
 import PlanInitializer from "./components/PlanInitializer";
+import WakeLock from "./components/WakeLock";
 
 export default async function Home() {
   const plan = await getWorkoutPlan();
@@ -12,6 +13,7 @@ export default async function Home() {
 
   return (
     <div className="h-screen bg-zinc-950 text-zinc-50 font-sans flex flex-col px-4 py-3">
+      <WakeLock />
       <PlanInitializer plan={plan} />
       <div className="relative flex items-center justify-between mb-2 flex-shrink-0">
         <div className="flex items-center gap-2 text-xs text-zinc-500">

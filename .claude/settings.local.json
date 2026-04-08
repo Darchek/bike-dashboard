@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Skill(update-config)",
+      "Bash(xargs grep:*)"
     ]
   }
 }
