@@ -23,6 +23,7 @@ export interface CurrentWorkoutData {
   resistance: number;
   inclination: number;
   heart_rate: number;
+  distance?: number;
   calories_kcal: number;
   distance_km: number;
   watts: number;
@@ -41,4 +42,9 @@ export async function getCurrentWorkout(): Promise<CurrentWorkout> {
   const res = await fetch(`${BASE_URL}/workout/current`, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to fetch current workout: ${res.status}`);
   return res.json();
+}
+
+export function getWorkoutDistance(workout: CurrentWorkout | null): number {
+  if (!workout) return 0;
+  return workout.data.distance ?? workout.data.distance_km ?? 0;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { getCurrentWorkout } from "@/lib/api";
 import { DataPoint, useWorkoutStore } from "@/lib/store";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -14,7 +13,6 @@ import {
 } from "recharts";
 
 const WINDOW = 600;
-const POLL_MS = 1000;
 
 function formatTime(s: number): string {
   const m = Math.floor(s / 60);
@@ -25,7 +23,8 @@ function formatTime(s: number): string {
 export default function WorkoutPlanChart() {
   const data = useWorkoutStore((s) => s.data);
   const totalTime = useWorkoutStore((s) => s.totalTime);
-  const [currentTime, setCurrentTime] = useState(0);
+  const startDate = useWorkoutStore((s) => s.currentWorkout?.start_date ?? null);
+  const [now, setNow] = useState(() => Date.now());
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
 
@@ -41,19 +40,23 @@ export default function WorkoutPlanChart() {
   }, []);
 
   useEffect(() => {
-    let startEpochMs: number | null = null;
-    const tick = async () => {
-      try {
-        const workout = await getCurrentWorkout();
-        useWorkoutStore.getState().setCurrentWorkout(workout);
-        if (workout.start_date) startEpochMs = new Date(workout.start_date).getTime();
-      } catch {}
-      if (startEpochMs !== null) setCurrentTime(Math.floor((Date.now() - startEpochMs) / 1000));
+    if (!startDate) return;
+
+    const startEpochMs = new Date(startDate).getTime();
+    const tick = () => {
+      const elapsedMs = Math.max(0, Date.now() - startEpochMs);
+      setNow(startEpochMs + elapsedMs);
     };
+
     tick();
-    const id = setInterval(tick, POLL_MS);
-    return () => clearInterval(id);
-  }, []);
+    const id = window.setInterval(tick, 1000);
+
+    return () => window.clearInterval(id);
+  }, [startDate]);
+
+  const currentTime = startDate
+    ? Math.max(0, Math.floor((now - new Date(startDate).getTime()) / 1000))
+    : 0;
 
   const windowStart = currentTime;
   const windowEnd = Math.min(currentTime + WINDOW, totalTime);
